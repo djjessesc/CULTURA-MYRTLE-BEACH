@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ t('Add Your Business', 'Agrega tu Negocio') }} — Cultura Myrtle Beach{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="section-title">{{ t('Add Your Business', 'Agrega tu Negocio') }}</h1>
+    <p class="section-subtitle">{{ t('Free listing. We review submissions before publishing.', 'Listado gratuito. Revisamos las solicitudes antes de publicar.') }}</p>
+    <div class="form-card">
+      <form method="post">
+        <div class="form-row">
+          <div class="form-group"><label class="required" for="name">{{ t('Business Name (English)', 'Nombre (Inglés)') }}</label><input type="text" id="name" name="name" required value="{{ form.name or '' }}"></div>
+          <div class="form-group"><label for="name_es">{{ t('Business Name (Spanish)', 'Nombre (Español)') }}</label><input type="text" id="name_es" name="name_es" value="{{ form.name_es or '' }}"></div>
+        </div>
+        <div class="form-group"><label class="required" for="category">{{ t('Category', 'Categoría') }}</label>
+          <select id="category" name="category" required>
+            <option value="">{{ t('Select…', 'Seleccionar…') }}</option>
+            {% for cat in categories %}<option value="{{ cat.name_en }}" {% if form.category == cat.name_en %}selected{% endif %}>{{ cat.name_es if current_lang == 'es' else cat.name_en }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label for="description">{{ t('Description (English)', 'Descripción (Inglés)') }}</label><textarea id="description" name="description">{{ form.description or '' }}</textarea></div>
+        <div class="form-group"><label for="description_es">{{ t('Description (Spanish)', 'Descripción (Español)') }}</label><textarea id="description_es" name="description_es">{{ form.description_es or '' }}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="required" for="phone">{{ t('Phone', 'Teléfono') }}</label><input type="tel" id="phone" name="phone" required value="{{ form.phone or '' }}"></div>
+          <div class="form-group"><label for="whatsapp">WhatsApp</label><input type="tel" id="whatsapp" name="whatsapp" placeholder="18435550000" value="{{ form.whatsapp or '' }}"><p class="form-hint">{{ t('Country code, no spaces', 'Código de país, sin espacios') }}</p></div>
+        </div>
+        <div class="form-group"><label for="address">{{ t('Address', 'Dirección') }}</label><input type="text" id="address" name="address" value="{{ form.address or '' }}"></div>
+        <div class="form-row">
+          <div class="form-group"><label for="hours">{{ t('Hours', 'Horario') }}</label><input type="text" id="hours" name="hours" value="{{ form.hours or '' }}"></div>
+          <div class="form-group"><label for="languages">{{ t('Languages', 'Idiomas') }}</label><input type="text" id="languages" name="languages" value="{{ form.languages or 'Spanish, English' }}"></div>
+        </div>
+        <div class="form-group"><label for="services">{{ t('Services', 'Servicios') }}</label><input type="text" id="services" name="services" value="{{ form.services or '' }}"></div>
+        <div class="form-row">
+          <div class="form-group"><label for="website">Website</label><input type="url" id="website" name="website" value="{{ form.website or '' }}"></div>
+          <div class="form-group"><label for="facebook">Facebook</label><input type="url" id="facebook" name="facebook" value="{{ form.facebook or '' }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="instagram">Instagram</label><input type="url" id="instagram" name="instagram" value="{{ form.instagram or '' }}"></div>
+          <div class="form-group"><label for="tiktok">TikTok</label><input type="url" id="tiktok" name="tiktok" value="{{ form.tiktok or '' }}"></div>
+        </div>
+        <div class="form-group"><label for="email">{{ t('Your Email', 'Tu Email') }}</label><input type="email" id="email" name="email" value="{{ form.submitted_by or '' }}"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">{{ t('Submit for Review', 'Enviar para Revisión') }}</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

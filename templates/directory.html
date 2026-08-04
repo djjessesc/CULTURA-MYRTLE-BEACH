@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ t('Business Directory', 'Directorio de Negocios') }} — Cultura Myrtle Beach{% endblock %}
+{% block extra_head %}{% if view == 'map' %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">{% endif %}{% endblock %}
+{% block content %}
+<section class="section" style="padding-top:1.5rem;">
+  <div class="container">
+    <h1 class="section-title" style="text-align:left;margin-bottom:1rem;">{{ t('Business Directory', 'Directorio de Negocios') }}</h1>
+    <div class="filters">
+      <form method="get" action="{{ url_for('directory') }}">
+        <input type="hidden" name="view" value="{{ view }}">
+        <input type="search" name="q" value="{{ q }}" placeholder="{{ t('Search…', 'Buscar…') }}">
+        <select name="category">
+          <option value="">{{ t('All Categories', 'Todas las Categorías') }}</option>
+          {% for cat in categories %}
+          <option value="{{ cat.name_en }}" {% if category == cat.name_en %}selected{% endif %}>{{ cat.name_es if current_lang == 'es' else cat.name_en }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">{{ t('Filter', 'Filtrar') }}</button>
+        <div class="view-toggle">
+          <a href="{{ url_for('directory', q=q, category=category, view='list') }}" class="{{ 'active' if view == 'list' }}">☰ {{ t('List', 'Lista') }}</a>
+          <a href="{{ url_for('directory', q=q, category=category, view='map') }}" class="{{ 'active' if view == 'map' }}">🗺️ {{ t('Map', 'Mapa') }}</a>
+        </div>
+      </form>
+    </div>
+    {% if view == 'map' %}
+      <div id="map"></div>
+    {% else %}
+      {% if businesses %}
+      <p style="color:var(--text-muted);margin-bottom:1rem;">{{ businesses|length }} {{ t('results', 'resultados') }}</p>
+      <div class="biz-grid">
+        {% for biz in businesses %}
+        <article class="biz-card">
+          <div class="biz-card-cover"></div>
+          <div class="biz-card-body">
+            <div class="biz-card-logo" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:#f0f0f0;">🏪</div>
+            <h3><a href="{{ url_for('business_profile', slug=biz.slug) }}">{{ biz.name_es if current_lang == 'es' and biz.name_es else biz.name }}</a></h3>
+            <div class="biz-meta">{{ biz.category }}</div>
+            <p class="biz-desc">{{ (biz.description_es if current_lang == 'es' and biz.description_es else biz.description) or '' }}</p>
+            <div class="badges">
+              {% if biz.featured %}<span class="badge badge-featured">{{ t('Featured', 'Destacado') }}</span>{% endif %}
+              {% if biz.verified %}<span class="badge badge-verified">✓ {{ t('Verified', 'Verificado') }}</span>{% endif %}
+            </div>
+            <div style="margin-top:0.85rem;display:flex;gap:0.4rem;flex-wrap:wrap;">
+              {% if biz.phone %}<a href="tel:{{ biz.phone }}" class="btn btn-call btn-sm">📞 {{ t('Call', 'Llamar') }}</a>{% endif %}
+              {% if biz.whatsapp %}<a href="https://wa.me/{{ biz.whatsapp }}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">WhatsApp</a>{% endif %}
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state"><div class="icon">🔍</div><p>{{ t('No businesses found.', 'No se encontraron negocios.') }}</p></div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% if view == 'map' %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  const map = L.map('map').setView([33.695,-78.89],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+  const params = new URLSearchParams(window.location.search);
+  let url = '/api/businesses?';
+  if(params.get('q')) url += 'q='+encodeURIComponent(params.get('q'))+'&';
+  if(params.get('category')) url += 'category='+encodeURIComponent(params.get('category'));
+  fetch(url).then(r=>r.json()).then(data=>{
+    const bounds=[];
+    data.forEach(b=>{
+      if(!b.lat||!b.lng) return;
+      const name = {% if current_lang == 'es' %}b.name_es||b.name{% else %}b.name{% endif %};
+      L.marker([b.lat,b.lng]).addTo(map).bindPopup(`<strong><a href="/business/${b.slug}">${name}</a></strong><br>${b.category}<br>${b.address||''}<br>${b.phone?`<a href="tel:${b.phone}">${b.phone}</a>`:''}`);
+      bounds.push([b.lat,b.lng]);
+    });
+    if(bounds.length) map.fitBounds(bounds,{padding:[40,40]});
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ 'Edit' if biz else 'New' }} Business — Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="admin-header"><div class="container header-inner"><strong>Cultura MB Admin</strong><div style="display:flex;gap:1rem;"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a><a href="{{ url_for('admin_logout') }}">Logout</a></div></div></header>
+  <main class="section"><div class="container">
+    <h1 style="font-size:1.5rem;margin-bottom:1.25rem;">{{ 'Edit Business' if biz else 'Add New Business' }}</h1>
+    <div class="form-card" style="max-width:800px;">
+      <form method="post" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group"><label class="required" for="name">Name (EN)</label><input type="text" id="name" name="name" required value="{{ biz.name if biz else '' }}"></div>
+          <div class="form-group"><label for="name_es">Name (ES)</label><input type="text" id="name_es" name="name_es" value="{{ biz.name_es if biz else '' }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="slug">Slug</label><input type="text" id="slug" name="slug" value="{{ biz.slug if biz else '' }}"></div>
+          <div class="form-group"><label class="required" for="category">Category</label>
+            <select id="category" name="category" required>
+              {% for cat in categories %}<option value="{{ cat.name_en }}" {% if biz and biz.category == cat.name_en %}selected{% endif %}>{{ cat.name_en }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label for="description">Description (EN)</label><textarea id="description" name="description">{{ biz.description if biz else '' }}</textarea></div>
+        <div class="form-group"><label for="description_es">Description (ES)</label><textarea id="description_es" name="description_es">{{ biz.description_es if biz else '' }}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label for="phone">Phone</label><input type="tel" id="phone" name="phone" value="{{ biz.phone if biz else '' }}"></div>
+          <div class="form-group"><label for="whatsapp">WhatsApp</label><input type="text" id="whatsapp" name="whatsapp" value="{{ biz.whatsapp if biz else '' }}"></div>
+        </div>
+        <div class="form-group"><label for="address">Address</label><input type="text" id="address" name="address" value="{{ biz.address if biz else '' }}"></div>
+        <div class="form-row">
+          <div class="form-group"><label for="lat">Latitude</label><input type="text" id="lat" name="lat" value="{{ biz.lat if biz else '' }}"></div>
+          <div class="form-group"><label for="lng">Longitude</label><input type="text" id="lng" name="lng" value="{{ biz.lng if biz else '' }}"></div>
+        </div>
+        <div class="form-group"><label for="hours">Hours</label><input type="text" id="hours" name="hours" value="{{ biz.hours if biz else '' }}"></div>
+        <div class="form-group"><label for="services">Services</label><input type="text" id="services" name="services" value="{{ biz.services if biz else '' }}"></div>
+        <div class="form-group"><label for="languages">Languages</label><input type="text" id="languages" name="languages" value="{{ biz.languages if biz else 'Spanish, English' }}"></div>
+        <div class="form-row">
+          <div class="form-group"><label for="website">Website</label><input type="url" id="website" name="website" value="{{ biz.website if biz else '' }}"></div>
+          <div class="form-group"><label for="facebook">Facebook</label><input type="url" id="facebook" name="facebook" value="{{ biz.facebook if biz else '' }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="instagram">Instagram</label><input type="url" id="instagram" name="instagram" value="{{ biz.instagram if biz else '' }}"></div>
+          <div class="form-group"><label for="tiktok">TikTok</label><input type="url" id="tiktok" name="tiktok" value="{{ biz.tiktok if biz else '' }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="google_profile">Google Business</label><input type="url" id="google_profile" name="google_profile" value="{{ biz.google_profile if biz else '' }}"></div>
+          <div class="form-group"><label for="google_reviews">Google Reviews</label><input type="url" id="google_reviews" name="google_reviews" value="{{ biz.google_reviews if biz else '' }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="active" {% if not biz or biz.status=='active' %}selected{% endif %}>Active</option>
+              <option value="pending" {% if biz and biz.status=='pending' %}selected{% endif %}>Pending</option>
+              <option value="hidden" {% if biz and biz.status=='hidden' %}selected{% endif %}>Hidden</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;gap:1.5rem;padding-top:1.5rem;">
+            <label style="display:flex;align-items:center;gap:0.4rem;"><input type="checkbox" name="featured" value="1" {% if biz and biz.featured %}checked{% endif %}> Featured</label>
+            <label style="display:flex;align-items:center;gap:0.4rem;"><input type="checkbox" name="verified" value="1" {% if biz and biz.verified %}checked{% endif %}> Verified</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+          <button type="submit" class="btn btn-primary">{{ 'Update' if biz else 'Create' }}</button>
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div></main>
+</body>
+</html>

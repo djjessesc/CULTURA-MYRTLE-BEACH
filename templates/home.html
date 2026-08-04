@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Cultura Myrtle Beach — {{ t('Latino Business Directory', 'Directorio de Negocios Latinos') }}{% endblock %}
+{% block meta_description %}{{ t('Discover Latino-owned restaurants, markets, salons, services and more in Myrtle Beach, SC.', 'Descubre restaurantes, mercados, salones, servicios y más de propiedad latina en Myrtle Beach, SC.') }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-content">
+    <h1>{{ t('Find Latino Businesses in Myrtle Beach', 'Encuentra Negocios Latinos en Myrtle Beach') }}</h1>
+    <p>{{ t('Your bilingual community hub for restaurants, markets, services and more across the Grand Strand.', 'Tu centro comunitario bilingüe para restaurantes, mercados, servicios y más en el Grand Strand.') }}</p>
+    <form class="hero-search" action="{{ url_for('directory') }}" method="get">
+      <input type="search" name="q" placeholder="{{ t('Search businesses, food, services…', 'Buscar negocios, comida, servicios…') }}">
+      <button type="submit" class="btn btn-primary">{{ t('Search', 'Buscar') }}</button>
+    </form>
+  </div>
+</section>
+<section class="stats">
+  <div class="container stats-inner">
+    <div class="stat"><strong>{{ total }}+</strong><span>{{ t('Businesses', 'Negocios') }}</span></div>
+    <div class="stat"><strong>{{ categories|length }}</strong><span>{{ t('Categories', 'Categorías') }}</span></div>
+    <div class="stat"><strong>EN / ES</strong><span>{{ t('Bilingual', 'Bilingüe') }}</span></div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">{{ t('Browse by Category', 'Explorar por Categoría') }}</h2>
+    <p class="section-subtitle">{{ t('Find exactly what you need', 'Encuentra exactamente lo que necesitas') }}</p>
+    <div class="cat-grid">
+      {% for cat in categories %}
+      <a href="{{ url_for('directory', category=cat.name_en) }}" class="cat-card">
+        <div class="icon">{{ cat.icon }}</div>
+        <div class="name">{{ cat.name_es if current_lang == 'es' else cat.name_en }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <h2 class="section-title">{{ t('Featured Businesses', 'Negocios Destacados') }}</h2>
+    <p class="section-subtitle">{{ t('Trusted and verified community favorites', 'Favoritos de la comunidad, confiables y verificados') }}</p>
+    {% if featured %}
+    <div class="biz-grid">
+      {% for biz in featured %}
+      <article class="biz-card">
+        <div class="biz-card-cover">{% if biz.cover %}<img src="{{ url_for('static', filename='uploads/' + biz.cover) }}" alt="">{% endif %}</div>
+        <div class="biz-card-body">
+          <div class="biz-card-logo" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:#f0f0f0;">🏪</div>
+          <h3><a href="{{ url_for('business_profile', slug=biz.slug) }}">{{ biz.name_es if current_lang == 'es' and biz.name_es else biz.name }}</a></h3>
+          <div class="biz-meta">{{ biz.category }}</div>
+          <p class="biz-desc">{{ (biz.description_es if current_lang == 'es' and biz.description_es else biz.description) or '' }}</p>
+          <div class="badges">
+            {% if biz.featured %}<span class="badge badge-featured">{{ t('Featured', 'Destacado') }}</span>{% endif %}
+            {% if biz.verified %}<span class="badge badge-verified">✓ {{ t('Verified', 'Verificado') }}</span>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="text-center mt-2">
+      <a href="{{ url_for('directory') }}" class="btn btn-outline">{{ t('View All Businesses', 'Ver Todos los Negocios') }}</a>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container text-center">
+    <h2 class="section-title">{{ t('Own a business?', '¿Tienes un negocio?') }}</h2>
+    <p class="section-subtitle" style="max-width:500px;margin-left:auto;margin-right:auto;">{{ t('Join the directory for free. Reach more customers in the Latino community of Myrtle Beach and Horry County.', 'Únete al directorio gratis. Llega a más clientes en la comunidad latina de Myrtle Beach y el Condado de Horry.') }}</p>
+    <a href="{{ url_for('add_business') }}" class="btn btn-primary">{{ t('Add Your Business', 'Agrega tu Negocio') }}</a>
+  </div>
+</section>
+{% endblock %}

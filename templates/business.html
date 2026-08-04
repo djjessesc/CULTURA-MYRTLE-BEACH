@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ biz.name_es if current_lang == 'es' and biz.name_es else biz.name }} — Cultura Myrtle Beach{% endblock %}
+{% block content %}
+<div class="profile-hero"></div>
+<section class="profile-main">
+  <div class="container">
+    <div class="profile-card">
+      <div class="profile-logo" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:#f0f0f0;">🏪</div>
+      <div class="badges" style="margin-bottom:0.75rem;">
+        {% if biz.featured %}<span class="badge badge-featured">{{ t('Featured', 'Destacado') }}</span>{% endif %}
+        {% if biz.verified %}<span class="badge badge-verified">✓ {{ t('Verified', 'Verificado') }}</span>{% endif %}
+        <span class="badge">{{ biz.category }}</span>
+      </div>
+      <h1 style="font-size:1.75rem;margin-bottom:0.35rem;">{{ biz.name_es if current_lang == 'es' and biz.name_es else biz.name }}</h1>
+      <p style="margin-top:0.75rem;line-height:1.65;">{{ (biz.description_es if current_lang == 'es' and biz.description_es else biz.description) or '' }}</p>
+      <div class="profile-actions">
+        {% if biz.phone %}<a href="tel:{{ biz.phone }}" class="btn btn-call">📞 {{ t('Call Now', 'Llamar Ahora') }}</a>{% endif %}
+        {% if biz.whatsapp %}<a href="https://wa.me/{{ biz.whatsapp }}" target="_blank" rel="noopener" class="btn btn-whatsapp">WhatsApp</a>{% endif %}
+        {% if biz.address %}<a href="https://www.google.com/maps/dir/?api=1&destination={% if biz.lat %}{{ biz.lat }},{{ biz.lng }}{% else %}{{ biz.address|urlencode }}{% endif %}" target="_blank" rel="noopener" class="btn btn-maps">📍 {{ t('Directions', 'Cómo Llegar') }}</a>{% endif %}
+        {% if biz.website %}<a href="{{ biz.website }}" target="_blank" rel="noopener" class="btn btn-outline">🌐 {{ t('Website', 'Sitio Web') }}</a>{% endif %}
+      </div>
+      <div class="profile-info-grid">
+        {% if biz.address %}<div class="info-block"><h4>{{ t('Address', 'Dirección') }}</h4><p>{{ biz.address }}</p></div>{% endif %}
+        {% if biz.hours %}<div class="info-block"><h4>{{ t('Hours', 'Horario') }}</h4><p>{{ biz.hours }}</p></div>{% endif %}
+        {% if biz.phone %}<div class="info-block"><h4>{{ t('Phone', 'Teléfono') }}</h4><p><a href="tel:{{ biz.phone }}">{{ biz.phone }}</a></p></div>{% endif %}
+        {% if biz.languages %}<div class="info-block"><h4>{{ t('Languages Spoken', 'Idiomas') }}</h4><p>{{ biz.languages }}</p></div>{% endif %}
+        {% if biz.services %}<div class="info-block" style="grid-column:1/-1;"><h4>{{ t('Services', 'Servicios') }}</h4><p>{{ biz.services }}</p></div>{% endif %}
+      </div>
+      {% if biz.facebook or biz.instagram or biz.tiktok or biz.google_profile or biz.google_reviews %}
+      <div style="margin-top:1.5rem;">
+        <h4 style="font-size:0.9rem;margin-bottom:0.5rem;color:var(--text-muted);">{{ t('Connect & Reviews', 'Conectar y Reseñas') }}</h4>
+        <div class="social-links">
+          {% if biz.facebook %}<a href="{{ biz.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+          {% if biz.instagram %}<a href="{{ biz.instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+          {% if biz.tiktok %}<a href="{{ biz.tiktok }}" target="_blank" rel="noopener">TikTok</a>{% endif %}
+          {% if biz.google_profile %}<a href="{{ biz.google_profile }}" target="_blank" rel="noopener">Google Business</a>{% endif %}
+          {% if biz.google_reviews %}<a href="{{ biz.google_reviews }}" target="_blank" rel="noopener">{{ t('Google Reviews', 'Reseñas de Google') }}</a>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <p class="mt-2" style="text-align:center;"><a href="{{ url_for('directory') }}">← {{ t('Back to Directory', 'Volver al Directorio') }}</a></p>
+  </div>
+</section>
+{% endblock %}

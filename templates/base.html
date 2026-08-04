@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Cultura Myrtle Beach{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Latino business directory and community hub for Myrtle Beach, South Carolina.{% endblock %}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ request.url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{{ url_for('home') }}" class="logo">Cultura <span>MB</span></a>
+      <nav class="nav-links">
+        <a href="{{ url_for('directory') }}">{{ t('Directory', 'Directorio') }}</a>
+        <a href="{{ url_for('directory', view='map') }}">{{ t('Map', 'Mapa') }}</a>
+        <a href="{{ url_for('add_business') }}">{{ t('Add Business', 'Agregar Negocio') }}</a>
+        <div class="lang-switch">
+          <a href="{{ url_for('set_language', lang='en', next=request.full_path) }}" class="{{ 'active' if current_lang == 'en' }}">EN</a>
+          <a href="{{ url_for('set_language', lang='es', next=request.full_path) }}" class="{{ 'active' if current_lang == 'es' }}">ES</a>
+        </div>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+    </div>
+    <div class="container mobile-nav" id="mobileNav">
+      <a href="{{ url_for('directory') }}">{{ t('Directory', 'Directorio') }}</a>
+      <a href="{{ url_for('directory', view='map') }}">{{ t('Map', 'Mapa') }}</a>
+      <a href="{{ url_for('add_business') }}">{{ t('Add Business', 'Agregar Negocio') }}</a>
+      <div class="lang-switch" style="margin-top:0.5rem;">
+        <a href="{{ url_for('set_language', lang='en', next=request.full_path) }}" class="{{ 'active' if current_lang == 'en' }}">EN</a>
+        <a href="{{ url_for('set_language', lang='es', next=request.full_path) }}" class="{{ 'active' if current_lang == 'es' }}">ES</a>
+      </div>
+    </div>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container" style="padding-top:1rem;">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">Cultura <span>Myrtle Beach</span></div>
+        <p>{{ t('The bilingual Latino business directory and community hub for the Grand Strand.', 'El directorio bilingüe de negocios latinos y centro comunitario del Grand Strand.') }}</p>
+      </div>
+      <div>
+        <h4 style="color:white;margin-bottom:0.75rem;">{{ t('Explore', 'Explorar') }}</h4>
+        <p><a href="{{ url_for('directory') }}">{{ t('Business Directory', 'Directorio de Negocios') }}</a></p>
+        <p><a href="{{ url_for('directory', view='map') }}">{{ t('Map View', 'Vista de Mapa') }}</a></p>
+        <p><a href="{{ url_for('add_business') }}">{{ t('Add Your Business', 'Agrega tu Negocio') }}</a></p>
+      </div>
+      <div>
+        <h4 style="color:white;margin-bottom:0.75rem;">{{ t('Community', 'Comunidad') }}</h4>
+        <p>{{ t('Supporting Latino-owned and Latino-serving businesses in Myrtle Beach & Horry County.', 'Apoyando negocios de propiedad y servicio latino en Myrtle Beach y el Condado de Horry.') }}</p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      &copy; {{ now_year }} Cultura Myrtle Beach. {{ t('Built for the community.', 'Hecho para la comunidad.') }}
+    </div>
+  </footer>
+  <script>
+    document.getElementById('menuToggle')?.addEventListener('click', function() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

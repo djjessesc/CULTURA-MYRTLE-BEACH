@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Cultura Myrtle Beach</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="admin-header"><div class="container header-inner"><strong>Cultura MB Admin</strong><div style="display:flex;gap:1rem;"><a href="{{ url_for('home') }}">View Site</a><a href="{{ url_for('admin_logout') }}">Logout</a></div></div></header>
+  <main class="section"><div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for c,m in messages %}<div class="flash flash-{{c}}">{{m}}</div>{% endfor %}{% endwith %}
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+      <h1 style="font-size:1.5rem;">Dashboard</h1>
+      <a href="{{ url_for('admin_business_new') }}" class="btn btn-primary">+ Add Business</a>
+    </div>
+    {% if pending_count > 0 %}
+    <h2 style="font-size:1.15rem;margin-bottom:0.75rem;">Pending Submissions ({{ pending_count }})</h2>
+    <div style="overflow-x:auto;margin-bottom:2rem;">
+      <table class="admin-table"><thead><tr><th>Data</th><th>Actions</th></tr></thead><tbody>
+        {% for p in pending %}
+        <tr>
+          <td><pre style="font-size:0.8rem;white-space:pre-wrap;max-height:100px;overflow:auto;">{{ p.data }}</pre></td>
+          <td>
+            <form method="post" action="{{ url_for('admin_approve_submission', sub_id=p.id) }}" style="display:inline;"><button type="submit" class="btn btn-secondary btn-sm">Approve</button></form>
+            <form method="post" action="{{ url_for('admin_reject_submission', sub_id=p.id) }}" style="display:inline;"><button type="submit" class="btn btn-outline btn-sm">Reject</button></form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody></table>
+    </div>
+    {% endif %}
+    <h2 style="font-size:1.15rem;margin-bottom:0.75rem;">All Businesses</h2>
+    <div style="overflow-x:auto;">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Flags</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for b in businesses %}
+          <tr>
+            <td><strong>{{ b.name }}</strong></td><td>{{ b.category }}</td><td>{{ b.status }}</td>
+            <td>{% if b.featured %}⭐{% endif %}{% if b.verified %}✓{% endif %}</td>
+            <td class="admin-actions">
+              <a href="{{ url_for('admin_business_edit', biz_id=b.id) }}" class="btn btn-outline btn-sm">Edit</a>
+              <form method="post" action="{{ url_for('admin_business_delete', biz_id=b.id) }}" style="display:inline;" onsubmit="return confirm('Delete?');"><button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#991b1b;">Delete</button></form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="5">No businesses yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div></main>
+</body>
+</html>
